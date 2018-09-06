@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.sys.dao.SpecialtyDao">
+    
+	<sql id="specialtyColumns">
+	    a.id AS "id",
+		b.user_id AS "useid",
+	    a.name as  "name"
+	    b.level AS "level",
+		b.file_url AS "fileUrl",
+
+	</sql>
+	
+	<sql id="specialtyJoins">
+		LEFT JOIN sys_user_specialty b ON a.id = b.specialty_id
+	</sql>
+    
+	<select id="get" resultType="Specialty">
+		SELECT 
+			<include refid="specialtyColumns"/>
+		FROM sys_specialty a
+		<include refid="specialtyJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Specialty">
+		SELECT 
+			<include refid="specialtyColumns"/>
+		FROM sys_user_specialty a
+		<include refid="specialtyJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Specialty">
+		SELECT 
+			<include refid="specialtyColumns"/>
+		FROM sys_user_specialty a
+		<include refid="specialtyJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_user_specialty(
+			user_id,
+			specialty_id,
+			level,
+			file_url
+		) VALUES (
+			#{user.id},
+			#{specialtyId},
+			#{level},
+			#{fileUrl}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_user_specialty SET 	
+			user_id = #{user.id},
+			specialty_id = #{specialtyId},
+			level = #{level},
+			file_url = #{fileUrl}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_user_specialty
+		WHERE user_id = #{userId}
+	</update>
+	
+</mapper>

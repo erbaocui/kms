@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.sys.dao.OfficeDao">
+	<!--<resultMap id="officeResult" type="Office">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="parent.id" column="parent.id" />
+		<result property="parentIds" column="parentIds" />
+		<result property="code" column="code" />
+		<result property="sort" column="sort" />
+		<result property="type" column="type" />
+		<result property="grade" column="grade" />
+		<result property="address" column="address" />
+		<result property="zipCode" column="zipCode" />
+		<result property="master" column="master" />
+		<result property="phone" column="phone" />
+		<result property="fax" column="fax" />
+		<result property="email" column="email" />
+		<result property="remarks" column="remarks" />
+		<result property="createBy.id" column="createBy.id" />
+		<result property="createDate" column="createDate" />
+		<result property="updateBy.id" column="updateBy.id" />
+		<result property="updateDate" column="updateDate" />
+		<result property="delFlag" column="delFlag" />
+		<result property="useable" column="useable" />
+		<result property="primaryPerson.id" column="primaryPerson.id" />
+		<result property="primaryPerson.loginName" column="primaryPerson.loginName" />
+		<result property="primaryPerson.loginName" column="primaryPerson.loginName" />
+		<result property="primaryPerson.name" column="primaryPerson.name" />
+		<result property="deputyPerson.loginName" column="deputyPerson.id" />
+		<result property="deputyPerson.name" column="deputyPerson.name" />
+
+		<collection property="deputyPersons" ofType="User">
+			<id property="id" column="deputyPersons.id" />
+			<id property="loginName" column="deputyPersons.loginName" />
+			<id property="name" column="deputyPersons.name" />
+		</collection>
+	</resultMap>-->
+	<sql id="officeColumns">
+		a.id,
+		a.parent_id AS "parent.id",
+		a.parent_ids AS "parentIds",
+		<!--
+       a.area_id AS "area.id",
+       -->
+       a.code,
+       a.name,
+       a.sort,
+       a.type,
+       a.grade,
+       a.address,
+       a.zip_code,
+       a.master,
+       a.phone,
+       a.fax,
+       a.email,
+       a.remarks,
+       a.create_by AS "createBy.id",
+       a.create_date,
+       a.update_by AS "updateBy.id",
+       a.update_date,
+       a.del_flag,
+       a.useable AS useable,
+       a.primary_person AS "primaryPerson.id",
+	   pp.login_name AS "primaryPerson.loginName",
+       a.deputy_person AS "deputyPerson.id",
+	   dp.login_name AS "deputyPerson.loginName",
+       p.name AS "parent.name",
+	  <!--
+       ar.name AS "area.name",
+       ar.parent_ids AS "area.parentIds",
+       -->
+       pp.name AS "primaryPerson.name",
+       dp.name AS "deputyPerson.name"
+   </sql>
+
+   <sql id="officeJoins">
+       LEFT JOIN sys_office p ON p.id = a.parent_id
+	   <!--
+	   LEFT JOIN sys_area ar ON ar.id = a.area_id
+	  -->
+   LEFT JOIN  sys_user  pp ON pp.id = a.primary_person
+   LEFT JOIN sys_user dp ON dp.id = a.deputy_person
+</sql>
+
+<select id="get" resultType="Office">
+   SELECT
+       <include refid="officeColumns"/>
+   FROM sys_office a
+   <include refid="officeJoins"/>
+   WHERE a.id = #{id}
+</select>
+
+<select id="findList"  resultType="Office">
+   SELECT
+       <include refid="officeColumns"/>
+   FROM sys_office a
+   <include refid="officeJoins"/>
+   WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+   <!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		OR a.id = #{currentUser.office.id}
+		ORDER BY a.code
+	</select>
+			
+	<select id="findAllList"  resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY a.code
+	</select>
+
+	<select id="findDeputyPersonList"  resultType="User">
+		SELECT u.id,
+		        u.name,
+		        u.login_name AS "loginName"
+
+		FROM sys_office_head a
+		inner join sys_user u on u.id= a.user_id
+		WHERE 1=1
+		and  a.type=2
+		and  a.office_id=#{officeId}
+	</select>
+	<delete id="deleteDeputy" parameterType="java.util.Map">
+		delete  from
+         sys_office_head
+		WHERE office_id = #{officeId}
+	</delete>
+	<insert id="insertBatchDeputy" parameterType="java.util.Map">
+		INSERT INTO sys_office_head(
+		office_id,
+		type,
+		user_id
+        ) VALUES
+		<foreach collection="userIdArray" item="item" index="index" separator=",">
+			(
+			#{officeId},
+			#{type},
+			#{item}
+			)
+		</foreach>
+	</insert>
+	
+	<select id="findByParentIdsLike"  resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
+		ORDER BY a.code
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_office(
+			id, 
+			parent_id, 
+			parent_ids,
+		    <!--
+			area_id,
+			-->
+			code, 
+			name, 
+			sort, 
+			type, 
+			grade, 
+			address, 
+			zip_code, 
+			master, 
+			phone, 
+			fax, 
+			email, 
+			create_by, 
+			create_date, 
+			update_by, 
+			update_date, 
+			remarks, 
+			del_flag,
+			useable,
+			primary_person,
+			deputy_person
+		) VALUES (
+			#{id}, 
+			#{parent.id}, 
+			#{parentIds},
+		    <!--
+			#{area.id},
+			-->
+			#{code}, 
+			#{name}, 
+			#{sort}, 
+			#{type}, 
+			#{grade}, 
+			#{address}, 
+			#{zipCode}, 
+			#{master}, 
+			#{phone}, 
+			#{fax}, 
+			#{email}, 
+			#{createBy.id}, 
+			#{createDate}, 
+			#{updateBy.id}, 
+			#{updateDate}, 
+			#{remarks}, 
+			#{delFlag},
+			#{useable},
+			#{primaryPerson.id},
+			#{deputyPerson.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_office SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds},
+			<!--
+			area_id = #{area.id},
+			-->
+			code = #{code}, 
+			name = #{name}, 
+			type = #{type}, 
+			grade = #{grade}, 
+			address = #{address}, 
+			zip_code = #{zipCode}, 
+			master = #{master}, 
+			phone = #{phone}, 
+			fax = #{fax}, 
+			email = #{email}, 
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			remarks = #{remarks},
+			useable=#{useable},
+			primary_person=#{primaryPerson.id},
+			deputy_person=#{deputyPerson.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateParentIds">
+		UPDATE sys_office SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_office SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id} OR parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+					<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	
+</mapper>
