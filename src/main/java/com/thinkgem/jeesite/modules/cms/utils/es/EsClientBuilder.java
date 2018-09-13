@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.common.es;
+package com.thinkgem.jeesite.modules.cms.utils.es;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;

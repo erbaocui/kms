@@ -24,7 +24,9 @@
 		a.remarks AS "remarks",
 		a.del_flag AS "delFlag",
 		c.name AS "category.name",
-		u.name AS "user.name"
+		u.name AS "user.name",
+		a.specialty AS "specialty",
+		a.type AS "type"
 	</sql>
 	
 	<sql id="cmsArticleJoins">
@@ -126,7 +128,9 @@
 			update_by,
 			update_date,
 			remarks,
-			del_flag
+			del_flag,
+			specialty,
+			type
 		) VALUES (
 			#{id},
 			#{category.id},
@@ -147,7 +151,9 @@
 			#{updateBy.id},
 			#{updateDate},
 			#{remarks},
-			#{delFlag}
+			#{delFlag},
+			#{specialty},
+			#{type}
 		)
 	</insert>
 	
@@ -170,7 +176,10 @@
 			update_by = #{updateBy.id},
 			update_date = #{updateDate},
 			remarks = #{remarks},
-			del_flag = #{delFlag}
+			del_flag = #{delFlag},
+			specialty = #{specialty},
+			type = #{type}
+
 		WHERE id = #{id}
 	</update>
 	

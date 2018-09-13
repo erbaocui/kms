@@ -106,7 +106,11 @@ public class ArticleController extends BaseController {
 		if (!beanValidator(model, article)){
 			return form(article, model);
 		}
+		Category category=new Category();
+		category.setId("3");
+		article.setCategory(category);
 		articleService.save(article);
+		esService.restSave(article);
 		addMessage(redirectAttributes, "保存文章'" + StringUtils.abbr(article.getTitle(),50) + "'成功");
 		String categoryId = article.getCategory()!=null?article.getCategory().getId():null;
 		return "redirect:" + adminPath + "/cms/article/?repage&category.id="+(categoryId!=null?categoryId:"");
@@ -164,8 +168,8 @@ public class ArticleController extends BaseController {
 		List<Article> list=articleService.findAll(new Article());
 		for(Article article:list){
 			article.setArticleData(articleDataService.get(article.getId()));
-			esService.deleteById(article.getId());
-			esService.add(article);
+			esService.restDelete(article.getId());
+			esService.restSave(article);
 		}
 
 		model.addAttribute("message","成功");

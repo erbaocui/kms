@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.common.es;
+package com.thinkgem.jeesite.modules.cms.utils.es;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.client.transport.TransportClient;
@@ -10,12 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
+import org.springframework.stereotype.Repository;
 
 import java.net.InetAddress;
-import java.util.List;
 import java.util.Properties;
 
 
@@ -23,7 +21,7 @@ import java.util.Properties;
  * Created by home on 2017/11/3.
  */
 
-@Component("esTransportClient")
+@Repository("esTransportClient")
 public class EsTransportClient implements FactoryBean<TransportClient>, InitializingBean, DisposableBean {
 
     private static final Logger logger = LoggerFactory.getLogger(EsTransportClient.class);
@@ -70,7 +68,7 @@ public class EsTransportClient implements FactoryBean<TransportClient>, Initiali
         buildClient();
     }
 
-    protected void buildClient() throws Exception {
+    public  void buildClient() throws Exception {
     /*    // 设置端口名字
         InetSocketTransportAddress node = new InetSocketTransportAddress(InetAddress.getByName("169.254.100.12"), 9300);
         // 设置名字
@@ -95,8 +93,9 @@ public class EsTransportClient implements FactoryBean<TransportClient>, Initiali
         }
         return Settings.builder()
                 .put("cluster.name", clusterName)
+                /*
                 .put("client.transport.sniff", clientTransportSniff)
-                /*/.put("client.transport.sniff", clientTransportSniff)
+                .put("client.transport.sniff", clientTransportSniff)
                 .put("client.transport.ignore_cluster_name", clientIgnoreClusterName)
                 .put("client.transport.ping_timeout", clientPingTimeout)
                 .put("client.transport.nodes_sampler_interval", clientNodesSamplerInterval)*/

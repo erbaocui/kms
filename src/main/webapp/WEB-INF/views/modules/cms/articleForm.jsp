@@ -52,11 +52,44 @@
 			</div>
 		</div>--%>
 		<div class="control-group">
+			<div class="row-fluid">
+
+				<div class="span3">
+					<label  class="control-label" >专&nbsp;&nbsp;&nbsp;&nbsp;业:</label>
+					<div class="controls">
+						<form:select path="specialty" class="form-control input-small" >
+							<form:options items="${fns:getDictList('specialty')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+						</form:select>
+					</div>
+				</div>
+				<div class="span3">
+
+					<label  class="control-label" >类&nbsp;&nbsp;&nbsp;&nbsp;型:</label>
+					<div class="controls">
+						<form:select path="type" class="form-control input-small" >
+							<form:options items="${fns:getDictList('type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+						</form:select>
+					</div>
+				</div>
+			</div>
+				<%--<div class="span2">
+					<label >类&nbsp;&nbsp;&nbsp;&nbsp;型:</label>
+					<form:select path="type"  class="form-control input-small" >
+						<form:options items="${fns:getDictList('type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+					</form:select>
+				</div>
+				<div class="span1">
+				</div>
+
+			</div>--%>
+		</div>
+		<div class="control-group">
 			<label class="control-label">标题:</label>
 			<div class="controls">
 				<form:input path="title" htmlEscape="false" maxlength="200" class="input-xxlarge measure-input required"/>
 			</div>
 		</div>
+
 		<div class="control-group">
 			<label class="control-label">关键字:</label>
 			<div class="controls">

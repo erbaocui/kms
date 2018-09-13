@@ -46,6 +46,8 @@ public class Article extends DataEntity<Article> {
 	private Date endDate;	// 结束时间
 	
 	private User user;
+	private Integer specialty;
+	private Integer type;
     
 	public Article() {
 		super();
@@ -234,7 +236,22 @@ public class Article extends DataEntity<Article> {
    	public String getImageSrc() {
         return CmsUtils.formatImageSrcToWeb(this.image);
    	}
-	
+
+	public Integer getSpecialty() {
+		return specialty;
+	}
+
+	public void setSpecialty(Integer specialty) {
+		this.specialty = specialty;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
 }
 
 

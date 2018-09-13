@@ -29,7 +29,7 @@
 		<pagehelper.version>4.1.4</pagehelper.version>
 		<jodconverter.version>3.0</jodconverter.version>
 		<jod.version>3.2.1</jod.version>
-		<elasticsearch.version>5.6.8</elasticsearch.version>
+		<elasticsearch.version>5.6.10</elasticsearch.version>
 
 		<!-- tools version setting -->
 		<slf4j.version>1.7.7</slf4j.version>
@@ -471,12 +471,12 @@
 			<version>${jackson.version}</version>
 		</dependency>
 
-		<!-- fastjson json
+		<!-- fastjson json-->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 			<version>${fastjson.version}</version>
-		</dependency> -->
+		</dependency>
 
 		<!-- xstream xml -->
 		<dependency>
@@ -693,12 +693,18 @@
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>transport</artifactId>
 			<version>${elasticsearch.version}</version>
-			<exclusions>
+		<!--	<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
-			</exclusions>
+			</exclusions>-->
+		</dependency>
+
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-high-level-client</artifactId>
+			<version>5.6.10</version>
 		</dependency>
 
 

@@ -1,0 +1,45 @@
+PUT /kms
+{
+    "mappings": {
+      "article": {
+        "properties": {
+          "article_type": {
+            "type": "text",
+            "index": false
+          },
+          "content": {
+            "type": "text",
+            "analyzer": "ik_smart"
+          },
+          "create_date": {
+            "type": "date"
+          },
+          "id": {
+            "type": "text",
+            "index": false
+          },
+          "keywods": {
+            "type": "text",
+            "analyzer": "ik_smart"
+          },
+          "specialty": {
+            "type": "text",
+            "index": false
+          },
+          "description": {
+            "type": "text",
+            "analyzer": "ik_smart"
+          },
+          "title": {
+            "type": "text",
+            "analyzer": "ik_smart"
+          }
+        }
+      }
+    }
+}
+
+
+DELETE /kms
+
+GET /kms/article/_search

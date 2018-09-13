@@ -43,6 +43,7 @@
 	</script>
 </head>
 <body>
+<%--<form:checkboxes path="test" items="${specialtys}" itemLabel="lable" itemValue="value" htmlEscape="false" class="required"/>--%>
 	<form:form id="searchForm" method="get" class="search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -54,14 +55,30 @@
 						    <input type="submit" value="搜  索" class="btn"/>
 						</td>
 					</tr>
+					<tr>
+						<td>
+						<label>专业：</label>
+								<c:forEach items="${specialtys}" var="item" >
+							        <input type="checkbox" name="specialtys" value="${item.value}" />${item.label}
+							    </c:forEach>
+						<td>
+					</tr>
+					<tr>
+						<td>
+							<label>种类：</label>
+							<c:forEach items="${types}" var="item" >
+							<input type="checkbox" name="types" value="${item.value}" />${item.label}
+							</c:forEach>
+						<td>
+					</tr>
 				</table>
 	</form:form>
 	<dl class="search">
 		<c:if test="${fn:length(page.list) != 0}">
 			<c:forEach items="${page.list}" var="article">
-				<dt><a href="${ctx}/view-${article.category.id}-${article.id}${urlSuffix}" class="title" target="_blank">${article.title}</a></dt>
+				<dt><a a href="${pageContext.request.contextPath}${fns:getFrontPath()}/view-${article.category.id}-${article.id}${fns:getUrlSuffix()}" target="_blank" class="title" >${article.title}</a></dt>
 				<dd>${article.description}<span class="info"><br/>发布者：${article.createBy.name} &nbsp; 点击数：${article.hits} &nbsp; 发布时间：<fmt:formatDate value="${article.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/> &nbsp; 更新时间：<fmt:formatDate value="${article.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></span>
-					&nbsp;&nbsp;<a href="${ctx}/view-${article.category.id}-${article.id}${urlSuffix}" target="_blank">查看全文</a><br/></dd>
+					&nbsp;&nbsp;<a href="${pageContext.request.contextPath}${fns:getFrontPath()}/view-${article.category.id}-${article.id}${fns:getUrlSuffix()}" target="_blank">查看全文</a><br/></dd>
 			</c:forEach>
 			<%--<c:if test="${fn:length(page.list) <page.pageSize}">
 
