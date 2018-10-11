@@ -58,8 +58,19 @@
 					<tr>
 						<td>
 						<label>专业：</label>
+
+
 								<c:forEach items="${specialtys}" var="item" >
-							        <input type="checkbox" name="specialtys" value="${item.value}" />${item.label}
+								         <c:set var="flag" value="false" />
+										<c:forEach items="${checkedSpecialtys}" var="itemTwo" >
+							                 <c:if test="${item.value ==itemTwo}">
+								               <c:set var="flag" value="true" />
+										       <input type="checkbox" name="specialtys" value="${item.value}" checked="checked" />${item.label}
+							                 </c:if>
+							            </c:forEach>
+								         <c:if test="${flag ==false}">
+							                <input type="checkbox" name="specialtys" value="${item.value}" />${item.label}
+							             </c:if>
 							    </c:forEach>
 						<td>
 					</tr>
@@ -67,7 +78,16 @@
 						<td>
 							<label>种类：</label>
 							<c:forEach items="${types}" var="item" >
+								<c:set var="flag" value="false" />
+							<c:forEach items="${checkedTypes}" var="itemTwo" >
+							<c:if test="${item.value ==itemTwo}">
+								<c:set var="flag" value="true" />
+							<input type="checkbox" name="types" value="${item.value}" checked="checked" />${item.label}
+							</c:if>
+							</c:forEach>
+							<c:if test="${flag ==false}">
 							<input type="checkbox" name="types" value="${item.value}" />${item.label}
+							</c:if>
 							</c:forEach>
 						<td>
 					</tr>
@@ -88,7 +108,7 @@
 		</c:if>
 		<c:if test="${fn:length(page.list) eq 0}">
 			<dt><c:if test="${empty q}">请键入要查找的关键字。</c:if><c:if test="${not empty q}">抱歉，没有找到与“${q}”相关内容。</c:if><br/><br/>建议：</dt>
-			<dd><ul><li>检查输入是否正确；</li><li>简化输入词；</li><li>尝试其他相关词，如同义、近义词等。</li></ul></dd>
+			<dd><ul><li>检查输入是否正确；</li><li>简化输入词；</li><%--<li>尝试其他相关词，如同义、近义词等。</li>--%></ul></dd>
 		</c:if>
 	</dl>
 	<c:if test="${fn:length(page.list) != 0}">

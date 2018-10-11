@@ -45,6 +45,9 @@ public class SerachController extends BaseController {
 		//model.addAttribute("page",p);
 		model.addAttribute("specialtys",specialtyList);
 		model.addAttribute("types", typeList);
+		model.addAttribute("checkedSpecialtys",specialtys);
+		model.addAttribute("checkedTypes", types);
+		model.addAttribute("key", key);
 		return "modules/search/searchList";
 	}
 

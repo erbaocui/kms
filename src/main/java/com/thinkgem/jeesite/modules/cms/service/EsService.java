@@ -178,6 +178,7 @@ ArticleData articleData=new ArticleData();
 	public Page<Article> restSearch(Page<Article> page,String key,Integer[] typeArray,Integer[] specialtyArray){
 		Page<Article> p=page;
 		RestClient restClient=null;
+		key=key.toLowerCase();
 		try {
 		    int pageSize=page.getPageSize();
 			int pageNo=page.getPageNo()-1;
@@ -199,9 +200,9 @@ ArticleData articleData=new ArticleData();
 				specialtyLen=specialtyArray.length;
 			}
 			if( (typeLen+ specialtyLen)>0){
-				filter=",\"post_filter\": {\n"+
-						"\"bool\": {"+
-						"\"should\":[";
+				filter=",\"filter\": {\n"+
+						"\"bool\": {\n"+
+						"\"should\": [\n";
 				if(typeArray!=null) {
 					for (int i = 0; i < typeArray.length; i++) {
 						filter += "{\"term\" : {\n " +
@@ -213,7 +214,7 @@ ArticleData articleData=new ArticleData();
 				if( specialtyArray!=null) {
 					for (int i = 0; i < specialtyArray.length; i++) {
 						filter += "{\"term\" : {\n " +
-								"\"article_type\" : \"" + String.valueOf(specialtyArray[i]) + "\"" +
+								"\"specialty\" : \"" + String.valueOf(specialtyArray[i]) + "\"" +
 								"\n}" +
 								"\n},";
 					}
@@ -229,21 +230,23 @@ ArticleData articleData=new ArticleData();
 				commonad="{\n" +
 						"\"from\": " + pageNo * pageSize + ",\n" +
 						"\"size\": " + pageSize + ",\n " +
+						"\"min_score\": 1 ,\n" +
 						"\"query\": {\n" +
 						"             \"bool\":{\n" +
 						"                        \"should\": [" +
-						"{\"wildcard\":{ \"title\": \"*" + key + "*\"}}," +
-						"{\"wildcard\":{ \"keywods\": \"*" + key + "*\"}}," +
-						"{\"wildcard\":{ \"description\": \"*" + key + "*\"}}," +
-						"{\"wildcard\":{ \"content\": \"*" + key + "*\"}}" +
-						"                                     ]\n" +
+						"{\"match_phrase\":{ \"title\": \"" + key + "\"}}," +
+						"{\"match_phrase\":{ \"keywods\": \"" + key + "\"}}," +
+						"{\"match_phrase\":{ \"description\": \"" + key + "\"}}," +
+						"{\"match_phrase\":{ \"content\": \"" + key + "\"}}" +
+						"                                     ]\n" +filter+
 						"                          }\n" +
-						"              }\n" +filter+
+						"              }\n"+
 						"}";
 			}else{
 				commonad="{\n" +
 						"\"from\": " + pageNo * pageSize + ",\n" +
 						"\"size\": " + pageSize + ",\n " +
+						"\"min_score\": 1 ,\n" +
 						"\"query\": {\n" +
 								"\"match_all\": {} \n" +
 						   "}"+filter+
@@ -364,12 +367,15 @@ ArticleData articleData=new ArticleData();
 
 
 	public static  void main(String args[]){
-		EsService esService=new EsService();
+		/*EsService esService=new EsService();
 		//esService.search(new Page<Article>(),"");
 		Page p=new Page<Article>();
 		p.setPageNo(1);
 		p.setPageSize(15);
-		//esService.restSearch(p,null);
+		//esService.restSearch(p,null);*/
+		String str="标准GB2312";
+		System.out.println(str.toLowerCase());
+
 	}
 	
 
