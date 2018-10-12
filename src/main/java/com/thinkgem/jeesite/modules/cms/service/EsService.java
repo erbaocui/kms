@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.cms.dao.ArticleDao;
+import com.thinkgem.jeesite.modules.cms.dao.ArticleDataDao;
 import com.thinkgem.jeesite.modules.cms.utils.es.EsTransportClient;
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.utils.HtmlUtils;
@@ -52,6 +53,8 @@ public class EsService{
 	private EsTransportClient esTransportClient;
     @Autowired
 	private ArticleDao articleDao;
+	@Autowired
+	private ArticleDataDao articleDataDao;
 
 
 	private static final String PUT = "PUT";
@@ -240,8 +243,25 @@ ArticleData articleData=new ArticleData();
 						"{\"match_phrase\":{ \"content\": \"" + key + "\"}}" +
 						"                                     ]\n" +filter+
 						"                          }\n" +
-						"              }\n"+
-						"}";
+						"},\n"+
+						//"},"+
+				        "\"highlight\": {\n"+
+					    "\"pre_tags\":[\n"+
+					    "\"<mark>\"\n"+
+				        "],\n"+
+						"\"post_tags\": [\n"+
+					    "\"</mark>\"\n"+
+					    "]\n,"+
+					    "\"fields\": {\n"+
+						    "\"title\": {},\n"+
+							"\"keywods\": {},\n"+
+							"\"description\": {},\n"+
+							"\"content\": {}\n"+
+					    "},\n"+
+						"\"fragment_size\": 2147483647\n"+
+				        "}\n"+
+				"}";
+
 			}else{
 				commonad="{\n" +
 						"\"from\": " + pageNo * pageSize + ",\n" +
@@ -272,10 +292,47 @@ ArticleData articleData=new ArticleData();
 				article= articleDao.get(id);
 				User user= UserUtils.get(article.getCreateBy().getId());
 				article.setCreateBy(user);
-				//article.setId((String) recordJson.get("_id"));
-				/*article.setTitle((String)  articleJson.get("title"));
-				article.setKeywords((String)  articleJson.get("keywods"));
-				article.setDescription((String)  articleJson.get("description"));*/
+				//article.setId((String) recordJson.get("_id"));*/
+				//article.setTitle((String)  articleJson.get("title"));
+//				article.setKeywords((String)  articleJson.get("keywods"));
+//				article.setDescription((String)  articleJson.get("description"));
+//				article.setTitle((String)  articleJson.get("content"));
+				JSONObject  highlight= (JSONObject)recordJson.getJSONObject("highlight");
+				JSONArray titleJSONArray=highlight.getJSONArray("title");
+				if(titleJSONArray!=null) {
+					List<String> tempList = JSONObject.parseArray(titleJSONArray.toJSONString(), String.class);
+
+					if (null != tempList && tempList.size() > 0) {
+						article.setTitle(tempList.get(0));
+					}
+				}
+				JSONArray keywodsJSONArray=highlight.getJSONArray("keywods");
+				if(keywodsJSONArray!=null) {
+					List<String> tempList = JSONObject.parseArray(keywodsJSONArray.toJSONString(), String.class);
+
+					if (null != tempList && tempList.size() > 0) {
+						article.setKeywords(tempList.get(0));
+					}
+				}
+				JSONArray descriptionJSONArray=highlight.getJSONArray("description");
+				if(descriptionJSONArray!=null) {
+					List<String> tempList = JSONObject.parseArray(descriptionJSONArray.toJSONString(), String.class);
+
+					if (null != tempList && tempList.size() > 0) {
+						article.setDescription(tempList.get(0));
+					}
+				}
+				JSONArray contentJSONArray=highlight.getJSONArray("content");
+				if(contentJSONArray!=null) {
+					List<String> tempList = JSONObject.parseArray(contentJSONArray.toJSONString(), String.class);
+
+					if (null != tempList && tempList.size() > 0) {
+						ArticleData articleData=articleDataDao.get(article.getId());
+						articleData.setContent(tempList.get(0));
+						article.setArticleData(articleData);
+					}
+				}
+
 				list.add(article);
 
 			}
@@ -352,7 +409,8 @@ ArticleData articleData=new ArticleData();
 			json.put("article_type",article.getType().toString());
 			json.put("description", article.getDescription());
 			if (article.getArticleData().getContent() != null) {
-				json.put("content", HtmlUtils.removeHtmlTag(articleData.getContent()));
+				//json.put("content", HtmlUtils.removeHtmlTag(articleData.getContent()));
+				json.put("content",articleData.getContent());
 			}
 			json.put("create_date", article.getCreateDate());
 

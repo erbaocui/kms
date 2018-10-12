@@ -8,7 +8,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import com.thinkgem.jeesite.modules.cms.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,11 +26,6 @@ import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.servlet.ValidateCodeServlet;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.cms.entity.Article;
-import com.thinkgem.jeesite.modules.cms.entity.Category;
-import com.thinkgem.jeesite.modules.cms.entity.Comment;
-import com.thinkgem.jeesite.modules.cms.entity.Link;
-import com.thinkgem.jeesite.modules.cms.entity.Site;
 import com.thinkgem.jeesite.modules.cms.service.ArticleDataService;
 import com.thinkgem.jeesite.modules.cms.service.ArticleService;
 import com.thinkgem.jeesite.modules.cms.service.CategoryService;
@@ -224,7 +221,7 @@ public class FrontController extends BaseController{
 	 * 显示内容
 	 */
 	@RequestMapping(value = "view-{categoryId}-{contentId}${urlSuffix}")
-	public String view(@PathVariable String categoryId, @PathVariable String contentId, Model model) {
+	public String view(@PathVariable String categoryId, @PathVariable String contentId, HttpSession session, Model model) {
 		Category category = categoryService.get(categoryId);
 		if (category==null){
 			Site site = CmsUtils.getSite(Site.defaultSiteId());
@@ -240,8 +237,29 @@ public class FrontController extends BaseController{
 			}else{
 				categoryList = categoryService.findByParentId(category.getParent().getId(), category.getSite().getId());
 			}
+
+
 			// 获取文章内容
 			Article article = articleService.get(contentId);
+			article.setArticleData(articleDataService.get(article.getId()));
+			List<Article> articleList=(List<Article>)session.getAttribute("articleList");
+			if(articleList!=null){
+				for(Article a:articleList){
+					if(a.getId().equals(article.getId())){
+						article.setTitle(a.getTitle());
+						article.setKeywords(a.getKeywords());
+						article.setDescription(a.getDescription());
+						ArticleData articleData=a.getArticleData();
+						articleData.setContent(a.getArticleData().getContent());
+						article.setArticleData(articleData);
+
+
+
+					}
+				}
+
+			}
+
 			if (article==null || !Article.DEL_FLAG_NORMAL.equals(article.getDelFlag())){
 				return "error/404";
 			}
@@ -252,7 +270,7 @@ public class FrontController extends BaseController{
 			// 将数据传递到视图
 			model.addAttribute("category", categoryService.get(article.getCategory().getId()));
 			model.addAttribute("categoryList", categoryList);
-			article.setArticleData(articleDataService.get(article.getId()));
+
 			model.addAttribute("article", article);
 			model.addAttribute("relationList", relationList); 
             CmsUtils.addViewConfigAttribute(model, article.getCategory());
