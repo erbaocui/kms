@@ -26,14 +26,26 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/cms/article/?category.id=${article.category.id}">文章列表</a></li>
-		<shiro:hasPermission name="cms:article:edit"><li><a href="<c:url value='${fns:getAdminPath()}/cms/article/form?id=${article.id}&category.id=${article.category.id}'><c:param name='category.name' value='${article.category.name}'/></c:url>">文章添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/cms/article/?category.id=${article.category.id}&scope=${scope}">文章列表</a></li>
+		<c:if test="${scope =='private'}">
+		 <shiro:hasPermission name="cms:article:edit"><li><a href="<c:url value='${fns:getAdminPath()}/cms/article/form?id=${article.id}&category.id=${article.category.id}&scope=${scope}'><c:param name='category.name' value='${article.category.name}'/></c:url>">文章添加</a></li></shiro:hasPermission>
+	    </c:if>
 	</ul>
-	<form:form id="searchForm" modelAttribute="article" action="${ctx}/cms/article/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="article" action="${ctx}/cms/article?scope=${scope}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<%--<label>栏目：</label><sys:treeselect id="category" name="category.id" value="${article.category.id}" labelName="category.name" labelValue="${article.category.name}"
 					title="栏目" url="/cms/category/treeData" module="article" notAllowSelectRoot="false" cssClass="input-small"/>--%>
+	    <label>专业</label>
+		<form:select path="specialty" class="form-control input-small" >
+			<form:option value="" label="请选择"/>
+			<form:options items="${fns:getDictList('specialty')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+		</form:select>
+		<label>类型</label>
+		<form:select path="type" class="form-control input-small" >
+			<form:option value="" label="请选择"/>
+			<form:options items="${fns:getDictList('type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+		</form:select>
 		<label>标题：</label><form:input path="title" htmlEscape="false" maxlength="50" class="input-small"/>&nbsp;
 		<input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>&nbsp;&nbsp;
 <%--		<label>状态：</label><form:radiobuttons onclick="$('#searchForm').submit();" path="delFlag" items="${fns:getDictList('cms_del_flag')}" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>

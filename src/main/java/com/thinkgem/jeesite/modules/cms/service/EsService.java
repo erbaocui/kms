@@ -6,6 +6,7 @@ package com.thinkgem.jeesite.modules.cms.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.thinkgem.jeesite.common.config.Global;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.modules.cms.dao.ArticleDao;
 import com.thinkgem.jeesite.modules.cms.dao.ArticleDataDao;
@@ -30,6 +31,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.common.collect.HppcMaps;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -185,11 +187,18 @@ ArticleData articleData=new ArticleData();
 		try {
 		    int pageSize=page.getPageSize();
 			int pageNo=page.getPageNo()-1;
-//			int pageNo=1;
-//			int pageSize=10;
+
+
+			ArrayList<HttpHost> hostList = new ArrayList<HttpHost>();
+			String[] nodes =Global.getConfig("elasticsearch.clusterNodes").split(";");
+			for(String node:nodes){
+				String[] data= node.split(":");
+				String ip=data[0];
+				int port= Integer.valueOf(data[1]);
+				hostList.add(new HttpHost(ip,port, "http"));
+			}
 			restClient = RestClient.builder(
-					new HttpHost("169.254.100.12", 9200, "http"),
-					new HttpHost("169.254.100.13", 9200, "http")).build();
+					hostList.toArray(new HttpHost[nodes.length])).build();
 			String method = "POST";
 			String endpoint = "/kms/article/_search";
 			String  commonad="";

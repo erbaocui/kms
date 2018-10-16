@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.thinkgem.jeesite.modules.cms.service.*;
+import com.thinkgem.jeesite.modules.sys.entity.User;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,23 +64,20 @@ public class ArticleController extends BaseController {
 	
 	@RequiresPermissions("cms:article:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(Article article, HttpServletRequest request, HttpServletResponse response, Model model) {
-//		for (int i=0; i<10000000; i++){
-//			Article a = new Article();
-//			a.setCategory(new Category(article.getCategory().getId()));
-//			a.setTitle("测试测试测试测试测试测试测试测试"+a.getCategory().getId());
-//			a.setArticleData(new ArticleData());
-//			a.getArticleData().setContent(a.getTitle());
-//			articleService.save(a);
-//		}
+	public String list(Article article,String scope, HttpServletRequest request, HttpServletResponse response, Model model) {
+        if(scope.equals("private")){
+			User user= UserUtils.getUser();
+			article.setCreateBy(user);
+		}
         Page<Article> page = articleService.findPage(new Page<Article>(request, response), article, true); 
         model.addAttribute("page", page);
+		model.addAttribute("scope", scope);
 		return "modules/cms/articleList";
 	}
 
 	@RequiresPermissions("cms:article:view")
 	@RequestMapping(value = "form")
-	public String form(Article article, Model model) {
+	public String form(Article article,String scope, Model model) {
 		// 如果当前传参有子节点，则选择取消传参选择
 		if (article.getCategory()!=null && StringUtils.isNotBlank(article.getCategory().getId())){
 			List<Category> list = categoryService.findByParentId(article.getCategory().getId(), Site.getCurrentSiteId());
@@ -96,6 +94,7 @@ public class ArticleController extends BaseController {
         model.addAttribute("contentViewList",getTplContent());
         model.addAttribute("article_DEFAULT_TEMPLATE",Article.DEFAULT_TEMPLATE);
 		model.addAttribute("article", article);
+		model.addAttribute("scope", scope);
 		CmsUtils.addViewConfigAttribute(model, article.getCategory());
 		return "modules/cms/articleForm";
 	}
@@ -103,9 +102,9 @@ public class ArticleController extends BaseController {
 	@RequiresPermissions("cms:article:edit")
 	@RequestMapping(value = "save")
 	public String save(Article article, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, article)){
-			return form(article, model);
-		}
+//		if (!beanValidator(model, article)){
+//			return form(article, model);
+//		}
 		Category category=new Category();
 		category.setId("3");
 		article.setCategory(category);
@@ -131,12 +130,12 @@ public class ArticleController extends BaseController {
 	/**
 	 * 文章选择列表
 	 */
-	@RequiresPermissions("cms:article:view")
-	@RequestMapping(value = "selectList")
-	public String selectList(Article article, HttpServletRequest request, HttpServletResponse response, Model model) {
-        list(article, request, response, model);
-		return "modules/cms/articleSelectList";
-	}
+//	@RequiresPermissions("cms:article:view")
+//	@RequestMapping(value = "selectList")
+//	public String selectList(Article article, HttpServletRequest request, HttpServletResponse response, Model model) {
+//        list(article, request, response, model);
+//		return "modules/cms/articleSelectList";
+//	}
 	
 	/**
 	 * 通过编号获取文章标题

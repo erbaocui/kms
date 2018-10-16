@@ -74,6 +74,12 @@
 			<if test="image != null and image != ''">
 				AND a.image  = #{image}
 			</if>
+			<if test="specialty != null and specialty != ''">
+				AND a.specialty  = #{specialty}
+			</if>
+			<if test="type != null and type != ''">
+				AND a.type  = #{type}
+			</if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
 				AND a.create_by  = #{createBy.id}
 			</if>
