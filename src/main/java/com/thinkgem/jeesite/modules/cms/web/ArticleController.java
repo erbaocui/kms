@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thinkgem.jeesite.common.mapper.JsonMapper;
@@ -101,7 +102,7 @@ public class ArticleController extends BaseController {
 
 	@RequiresPermissions("cms:article:edit")
 	@RequestMapping(value = "save")
-	public String save(Article article, Model model, RedirectAttributes redirectAttributes) {
+	public String save(Article article, MultipartFile file,Model model, RedirectAttributes redirectAttributes) {
 //		if (!beanValidator(model, article)){
 //			return form(article, model);
 //		}

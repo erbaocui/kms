@@ -34,6 +34,10 @@
 				}
 			});
 		});
+
+		function test(){
+			console.log("测试代码");
+		}
 	</script>
 </head>
 <body>
@@ -124,6 +128,12 @@
 			<label class="control-label">来源:</label>
 			<div class="controls">
 				<form:input path="articleData.copyfrom" htmlEscape="false" maxlength="200" class="input-xlarge"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">文章附件:</label>
+			<div class="controls">
+			  <span id="abc">样例.doc</span><input type="file" id="file" name="file" value="test" onchange="test();"/>
 			</div>
 		</div>
 

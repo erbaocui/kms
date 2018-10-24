@@ -3,6 +3,7 @@ import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.modules.cms.entity.Article;
+import com.thinkgem.jeesite.modules.cms.service.ArticleService;
 import com.thinkgem.jeesite.modules.cms.service.EsService;
 
 import com.thinkgem.jeesite.modules.sys.entity.Dict;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.thinkgem.jeesite.modules.sys.utils.DictUtils.getDictList;
 
@@ -31,6 +34,9 @@ import static com.thinkgem.jeesite.modules.sys.utils.DictUtils.getDictList;
 public class SerachController extends BaseController {
 	@Autowired
 	private EsService esService;
+
+	@Autowired
+	private ArticleService articleService;
 
 	@RequestMapping(value = {"searchList", ""})
 	public String list(String key, Integer[] specialtys , Integer[] types, HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model) {
@@ -51,6 +57,18 @@ public class SerachController extends BaseController {
 		model.addAttribute("checkedTypes", types);
 		model.addAttribute("key", key);
 		return "modules/search/searchList";
+	}
+
+	@RequestMapping(value = {"firstPage", ""})
+	public String firstPage( HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model) {
+		List<Dict> typeList=DictUtils.getDictList("type");
+		Map<String,List<Article>> lastArticleMap= new LinkedHashMap<String,List<Article>>();
+		for(Dict dict:typeList){
+			List<Article>  list=articleService.findLastModify(Integer.valueOf(dict.getValue()));
+			lastArticleMap.put(dict.getLabel(),list);
+		}
+		model.addAttribute("lastArticleMap", lastArticleMap);
+		return "modules/search/firstPage";
 	}
 
 

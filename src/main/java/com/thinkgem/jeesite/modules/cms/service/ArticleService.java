@@ -199,5 +199,10 @@ public class ArticleService extends CrudService<ArticleDao, Article> {
 	public List<Article> findAll(Article article){
 		return dao.findAllList(article);
 	}
-	
+
+	public List<Article> findLastModify(Integer type){
+		return  dao.findLastModify(type);
+
+	}
+
 }
